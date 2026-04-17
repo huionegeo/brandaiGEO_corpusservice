@@ -1,0 +1,53 @@
+server:
+  port: 8081
+
+spring:
+  config:
+    import: optional:file:./.env[.properties],optional:file:../.env[.properties]
+  application:
+    name: user-service
+  cloud:
+    nacos:
+      username: ${NACOS_USER:nacos}
+      password: ${NACOS_PASSWORD:nacos}
+      discovery:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+      config:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+        file-extension: yaml
+        import-check:
+          enabled: false
+    sentinel:
+      transport:
+        dashboard: ${SENTINEL_DASHBOARD:localhost:8858}
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/brandai_user
+    username: ${POSTGRES_USER:brandai}
+    password: ${POSTGRES_PASSWORD:brandai123}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:brandai123}
+
+jwt:
+  secret: ${JWT_SECRET:BrandAI-Secret-Key-Must-Be-At-Least-256-Bits-Long!}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+logging:
+  level:
+    com.brandai.user: DEBUG
