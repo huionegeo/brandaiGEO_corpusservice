@@ -1,0 +1,53 @@
+server:
+  port: 8083
+
+spring:
+  config:
+    import: optional:file:./.env[.properties],optional:file:../.env[.properties]
+  application:
+    name: corpus-service
+  cloud:
+    nacos:
+      username: ${NACOS_USER:nacos}
+      password: ${NACOS_PASSWORD:nacos}
+      discovery:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+      config:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+        file-extension: yaml
+        import-check:
+          enabled: false
+    sentinel:
+      transport:
+        dashboard: ${SENTINEL_DASHBOARD:localhost:8858}
+    stream:
+      kafka:
+        binder:
+          brokers: ${KAFKA_BROKERS:localhost:9092}
+      bindings:
+        contentEvent-out-0:
+          destination: content-events
+          content-type: application/json
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/brandai_corpus
+    username: ${POSTGRES_USER:brandai}
+    password: ${POSTGRES_PASSWORD:brandai123}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  elasticsearch:
+    uris: http://${ES_HOST:localhost}:${ES_PORT:9200}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+logging:
+  level:
+    com.brandai.corpus: DEBUG
